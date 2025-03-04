@@ -19,28 +19,6 @@ export default function DreamPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  // const colorMap = {
-  //   빨간색: "red",
-  //   주황색: "orange",
-  //   노란색: "yellow",
-  //   초록색: "green",
-  //   파란색: "blue",
-  //   남색: "navy",
-  //   보라색: "purple",
-  //   분홍색: "pink",
-  //   검은색: "black",
-  //   흰색: "white",
-  //   회색: "gray",
-  //   갈색: "brown",
-  // };
-
-  // // 유효한 CSS 색상인지 검증
-  // const isValidColor = (color) => {
-  //   const s = new Option().style;
-  //   s.color = color;
-  //   return s.color !== "";
-  // };
-
   // 사용자 데이터 및 행운번호 가져오기
   useEffect(() => {
     const fetchUserData = async () => {
