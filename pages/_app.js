@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "../styles/globals.css";
+import { AuthProvider } from "../context/AuthContext"; // AuthContext 파일 경로에 맞게 조정
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -10,7 +11,7 @@ export default function MyApp({ Component, pageProps }) {
       script.async = true;
       script.onload = () => {
         if (window.Kakao) {
-          window.Kakao.init("c2aa4d1a2bec2127bcf21646d6a87b5d"); // 🔹 여기에 발급받은 JavaScript 키 입력
+          window.Kakao.init("c2aa4d1a2bec2127bcf21646d6a87b5d"); // 여기에 발급받은 JavaScript 키 입력
           console.log("✅ Kakao SDK 초기화 완료");
         }
       };
@@ -18,5 +19,9 @@ export default function MyApp({ Component, pageProps }) {
     }
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <AuthProvider>
+      <Component {...pageProps} />
+    </AuthProvider>
+  );
 }
