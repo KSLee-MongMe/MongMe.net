@@ -75,7 +75,7 @@ export default async function handler(req, res) {
         try {
         return JSON.parse(interpretation);
         } catch (error) {
-          console.error(error);
+          console.error("🔥 JSON 파싱 오류:", error);  // ✅ 명확하게 사용
         return "✅ 순수 문자열";
         }
     })());
