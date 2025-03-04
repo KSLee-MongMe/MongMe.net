@@ -12,6 +12,7 @@ export default function Home() {
   const [signupCompleted, setSignupCompleted] = useState(true); // 가입 완료 여부 상태 추가 (SNS 로그인 시 false로 생성)
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  console.log(router.pathname);
 
   useEffect(() => {
     setIsMounted(true);

@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { auth, googleAuthProvider } from "../lib/firebase";
-import { signInWithPopup, OAuthProvider, signInWithCustomToken } from "firebase/auth";
+import { signInWithPopup, OAuthProvider } from "firebase/auth";
 import { getDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useRouter } from "next/router";

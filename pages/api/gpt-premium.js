@@ -75,6 +75,7 @@ export default async function handler(req, res) {
         try {
         return JSON.parse(interpretation);
         } catch (error) {
+          console.error(error);
         return "✅ 순수 문자열";
         }
     })());

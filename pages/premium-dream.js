@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { auth } from '../lib/firebase';
-import { savePremiumDream } from '../lib/firestore';
+// import { auth } from '../lib/firebase';
+// import { savePremiumDream } from '../lib/firestore';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
 import html2canvas from 'html2canvas';
 import { useAuth } from '../context/AuthContext';
+import { useCallback } from 'react';
 
 export default function PremiumDreamPage() {
   const { user } = useAuth();
@@ -46,13 +47,13 @@ export default function PremiumDreamPage() {
   }, [router, user]);
 
   // ✅ 프리미엄 보너스 차감 함수
-  const usePremiumBonus = async () => {
+  const usePremiumBonus = useCallback(async () => {
     try {
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
-
+  
       if (!userSnap.exists()) return false;
-
+  
       const userData = userSnap.data();
       if (userData.premiumBonusChance > 0) {
         await updateDoc(userRef, {
@@ -65,7 +66,7 @@ export default function PremiumDreamPage() {
       console.error('프리미엄 보너스 차감 실패:', error);
       return false;
     }
-  };
+  }, [user]); // ✅ `user`가 변경될 때만 다시 생성되도록 설정
 
   // ✅ 프리미엄 해몽 요청
   const handleSubmit = async (e) => {

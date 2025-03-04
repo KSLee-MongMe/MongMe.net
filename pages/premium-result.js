@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-import { auth } from "../lib/firebase";
 import { collection, getDocs, query, where, orderBy, limit, startAfter } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useRouter } from "next/router";
@@ -16,13 +15,16 @@ export default function PremiumResultPage() {
   const { user, loading } = useAuth();
 
   const fetchPremiumDreams = async (initialLoad = false) => {
+    // (1) 로그인 상태가 아니면 로그인 페이지로
     if (!user && !loading) {
       router.push("/login");
       return;
     }
 
-    setIsLoading(true);
+    // (2) 이미 로딩 중이면 재호출 방지
+    if (isLoading) return;
 
+    setIsLoading(true);
     try {
       const dreamsRef = collection(db, "premiumDreams");
       let dreamsQuery = query(
@@ -32,6 +34,7 @@ export default function PremiumResultPage() {
         limit(3)
       );
 
+      // (3) 무한 스크롤 시점이면 lastVisible 기준으로 다음 문서들 가져오기
       if (!initialLoad && lastVisible) {
         dreamsQuery = query(
           dreamsRef,
@@ -52,7 +55,13 @@ export default function PremiumResultPage() {
           ...doc.data(),
         }));
 
-        setPremiumDreams((prevDreams) => [...prevDreams, ...dreamsList]);
+        // (4) 중복 필터링
+        setPremiumDreams((prevDreams) => {
+          const existingIds = new Set(prevDreams.map((dream) => dream.id));
+          const filteredNewDreams = dreamsList.filter((dream) => !existingIds.has(dream.id));
+          return [...prevDreams, ...filteredNewDreams];
+        });
+
         setLastVisible(dreamsSnap.docs[dreamsSnap.docs.length - 1]);
       }
     } catch (error) {
@@ -62,19 +71,25 @@ export default function PremiumResultPage() {
     }
   };
 
+  // (5) user와 loading이 확정된 뒤, 첫 로드
   useEffect(() => {
-    fetchPremiumDreams(true);
-  }, [router]);
+    if (!loading && user) {
+      fetchPremiumDreams(true);
+    }
+  }, [user, loading]);
 
+  // (6) IntersectionObserver: 마지막 아이템이 화면에 보이면 추가 데이터 로드
   const lastDreamElementRef = useCallback(
     (node) => {
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
+
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           fetchPremiumDreams();
         }
       });
+
       if (node) observer.current.observe(node);
     },
     [isLoading, hasMore]
