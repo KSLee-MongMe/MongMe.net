@@ -14,8 +14,27 @@ export default function Home() {
   const router = useRouter();
   console.log(router.pathname);
 
+  // ✅ 인앱 브라우저 감지 및 외부 브라우저 리디렉션 함수
+  const openInExternalBrowser = () => {
+    const url = window.location.href;
+
+    if (/Android/i.test(navigator.userAgent)) {
+      window.location.href = `intent://${url.replace("https://", "")}#Intent;scheme=https;package=com.android.chrome;end;`;
+    } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = `googlechrome://${url.replace("https://", "")}`;
+      setTimeout(() => {
+        window.location.href = url;
+      }, 500);
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
+    const isInAppBrowser = /KAKAOTALK|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
+    if (isInAppBrowser) {
+      openInExternalBrowser();
+      return; // ✅ 강제 이동 후 나머지 코드 실행 방지
+    }
   }, []);
 
   // 전역 인증 상태(user)가 로딩이 끝난 후, Firestore에서 사용자 이름 및 가입 완료 여부 가져오기
@@ -56,11 +75,7 @@ export default function Home() {
   // 대상 페이지를 결정하는 헬퍼 함수
   // 로그인하지 않은 경우: 로그인 페이지, 로그인 후 가입 완료되지 않은 경우: 가입 페이지, 그 외: 원래 타겟
   const getTarget = (target) => {
-    if (user) {
-      return signupCompleted ? target : "/signup";
-    } else {
-      return "/login";
-    }
+    return user ? (signupCompleted ? target : "/signup") : "/login";
   };
 
   return (
@@ -122,15 +137,23 @@ export default function Home() {
           혹시 몰라요. 오늘이 바로 복권을 사야 하는 날일지도요! 💸✨
         </p>
 
-        {/* 버튼: 로그인 여부에 따라 페이지 이동
-            로그인 후 가입 완료 여부에 따라 대상 경로가 결정됩니다. */}
+        {/* ✅ target="_blank" 추가로 새 창에서 열기 */}
         {isMounted && (
           <Link href={getTarget("/dream")} legacyBehavior>
-            <a className="mt-8 block px-8 py-3 bg-yellow-400 text-indigo-800 font-bold text-lg rounded-full hover:bg-yellow-500 transition">
+            <a target="_blank" rel="noopener noreferrer" className="mt-8 block px-8 py-3 bg-yellow-400 text-indigo-800 font-bold text-lg rounded-full hover:bg-yellow-500 transition">
               ✨ 지금 바로 시작해보세요!
             </a>
           </Link>
         )}
+
+        {/* ✅ 강제 이동이 불가능한 경우, 사용자에게 외부 브라우저에서 열기 버튼 제공 */}
+        <p className="text-red-300">카카오톡/페이스북/인스타그램 브라우저에서는 일부 기능이 제한될 수 있습니다.</p>
+        <button
+          onClick={openInExternalBrowser}
+          className="px-6 py-3 bg-white text-indigo-800 rounded-full border border-white hover:bg-indigo-600 hover:text-white transition"
+        >
+          📌 크롬 / 사파리에서 열기
+        </button>
 
         {/* 나머지 UI 구성 요소는 그대로 유지 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mt-12">
