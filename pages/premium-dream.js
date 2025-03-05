@@ -165,7 +165,11 @@ export default function PremiumDreamPage() {
 
         {!result && (
           <p className="text-center text-gray-600 mb-6">
-            MBTI와 사주를 간단히 표시하고, 상세 해몽과 2세트의 행운번호를 제공합니다.
+            당신에게 맞는 MBTI와 이달의 사주를 분석합니다.
+            <br />
+            MBTI와 사주를 바탕으로, 상세한 해몽을 시작합니다.
+            <br />
+            당신의 꿈에 맞는 로또 번호를 AI가 추출합니다.
           </p>
         )}
 
@@ -224,8 +228,10 @@ export default function PremiumDreamPage() {
         {isLoading && (
           <div className="flex flex-col items-center mt-4">
             <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-600 mt-2 text-center">
               AI가 꿈을 해몽 중입니다... 잠시만 기다려주세요 ⏳
+              <br />
+              상세한 해몽을 위해, 일반 해몽보다 많은 시간이 소요될 수 있습니다.
             </p>
           </div>
         )}

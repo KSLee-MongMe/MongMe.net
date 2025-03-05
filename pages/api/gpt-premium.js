@@ -1,3 +1,8 @@
+// 타임아웃 설정: 최대 실행 시간을 60초로 설정합니다.
+export const config = {
+  maxDuration: 60, // 원하는 값(초)으로 변경 가능
+};
+
 // ✅ Firestore 및 OpenAI API 불러오기
 import { getDoc, doc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
